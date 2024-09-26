@@ -1,6 +1,8 @@
 "use client"
 import { FormInputPost } from "@/app/types"
+import { useQuery } from "@tanstack/react-query"
 import { useForm , SubmitHandler } from "react-hook-form"
+import axios from "axios"
 
  type FormProps = {
     onSubmit: SubmitHandler<FormInputPost>
@@ -9,6 +11,14 @@ import { useForm , SubmitHandler } from "react-hook-form"
 
 const FormPost = ({onSubmit, isEditing} : FormProps) => {
   const {register,handleSubmit} = useForm<FormInputPost>()
+
+  const {data:tags,isPending:isloadingsTags} = useQuery({
+    queryKey:["tags"],
+    queryFn: async () => {
+      const response = await axios.get("/api/tags");
+      return response.data
+    }
+  })
 
   return (
     <form className="flex flex-col items-center justify-center gap-5 mt-10" onSubmit={handleSubmit(onSubmit)}>
